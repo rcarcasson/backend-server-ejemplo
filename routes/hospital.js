@@ -10,21 +10,32 @@ var Hospital = require('../models/hospital');
 // Obtener todos los hospitales
 app.get('/', (req, res, next) => {
 
-    Hospital.find({}).populate('usuario', 'nombre email').exec((error, hospitales) => {
-        if (error) {
-            return res.status(500).json({
-                ok: false,
-                mensaje: 'Error en base de datos',
-                errors: error
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    Hospital.find({})
+        .skip(desde)
+        .limit(5)
+        .populate('usuario', 'nombre email')
+        .exec((error, hospitales) => {
+            if (error) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error en base de datos',
+                    errors: error
+                });
+            }
+
+            Hospital.count({}, (err, conteo) => {
+                res.status(200).json({
+                    ok: true,
+                    total: conteo,
+                    hospitales: hospitales
+                });
             });
-        }
-        res.status(200).json({
-            ok: true,
-            hospitales: hospitales
+
+
         });
-
-
-    });
 });
 
 // Actualizar hospital

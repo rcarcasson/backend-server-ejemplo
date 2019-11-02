@@ -11,21 +11,31 @@ var Usuario = require('../models/usuario');
 // Obtener todos los usuarios
 app.get('/', (req, res, next) => {
 
-    Usuario.find({}, 'nombre email img rol').exec((error, usuarios) => {
-        if (error) {
-            return res.status(500).json({
-                ok: false,
-                mensaje: 'Error en base de datos',
-                errors: error
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    Usuario.find({}, 'nombre email img rol')
+        .skip(desde)
+        .limit(5)
+        .exec((error, usuarios) => {
+            if (error) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error en base de datos',
+                    errors: error
+                });
+            }
+
+            Usuario.count({}, (err, conteo) => {
+                res.status(200).json({
+                    ok: true,
+                    total: conteo,
+                    usuarios: usuarios
+                });
             });
-        }
-        res.status(200).json({
-            ok: true,
-            usuarios: usuarios
+
+
         });
-
-
-    });
 });
 
 // Actualizar usuario

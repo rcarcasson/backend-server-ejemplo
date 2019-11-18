@@ -92,12 +92,12 @@ app.post('/google', async(req, res) => {
                         error
                     });
                 }
-                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 });
+                var token = jwt.sign({ usuario: usuarioDb }, SEED, { expiresIn: 14400 });
                 res.status(200).json({
                     ok: true,
-                    usuario: usuarioDB,
+                    usuario: usuarioDb,
                     token: token,
-                    id: usuarioDB._id
+                    id: usuarioDb._id
                 });
             })
         }
